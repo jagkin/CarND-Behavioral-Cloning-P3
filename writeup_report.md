@@ -16,7 +16,7 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/placeholder.png "Model Visualization"
+[image1]: ./model.png "Model Visualization"
 [image2]: ./examples/forward.gif "Image in forward lap"
 [image3]: ./examples/recovery_left.gif "Recovery from left"
 [image4]: ./examples/recovery_right.gif "Recovery from right"
