@@ -80,9 +80,7 @@ The overall strategy for deriving a model architecture was to repurpose one of t
 
 My first step was to use a convolution neural network model similar to the network used by Nvidia's DriveAV team as discussed in the lesson.
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting.
-
-To combat the overfitting, I modified the model to include additional fully connected layers and add drop out layers after convolution layers and between connected layers.
+To combat the overfitting, I modified the model to include additional fully connected layers and added drop out layers (with 50% probability) after first 2 convolution layers and also after each fully connected layers before output layer.
 
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
@@ -90,7 +88,7 @@ At the end of the process, the vehicle is able to drive autonomously around the 
 
 The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes.
 
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
+Here is a visualization of the architecture generated using plot_model from keras.utils
 
 ![Model Architecture][image1]
 
@@ -113,11 +111,21 @@ Then I recorded a lap on track two using right lane driving. Here is an example 
 
 ![Track2][image6]
 
-To augment the data sat, I also flipped images and angles thinking that this would help model to learn driving under different condition and sort of normalize the steering angles in the training data.
+I also made use of the images from left and right camera, initially I planned to construct a panaromic image by stitching the left, center and right images as single input to the network however this would have required changes to drive.py to be able to stitch the images before feeding to the network. To avoid the changes to drive.py I simply augmented the data by treating the left and right images as if they are center images and "guesstimated" the steering angle by applying an "adjustment factor" of 0.2 This number may not be optimal as I did not do experiments to arrive at best value.
 
-
-After the collection process, I had X number of data points. I then preprocessed this data by normalizing the images by dividing the samples by 255 and subtracting 0.5 (so that mean is 0) and cropping the images to remove the 70 pixels from the top (to hide the distracting information like trees/shadows/sun etc) and 10 pixels from the bottom (to hide the image of the car itself).
+To augment the data set further, I also flipped images and angles thinking that this would help model to learn driving under different condition and sort of normalize the steering angles in the training data.
 
 I finally randomly shuffled the data set and put 20% of the data into a validation set.
 
+After the collection process, I had 45054 training data points and 11268 validation data points. I then preprocessed this data by normalizing the images by dividing the samples by 255 and subtracting 0.5 (so that mean is 0) and cropping the images to remove the 70 pixels from the top (to hide the distracting information like trees/shadows/sun etc) and 25 pixels from the bottom (to hide the image of the car itself).
+
 I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 5 as evidenced by validation loss. I used an adam optimizer so that manually training the learning rate wasn't necessary.
+
+### Possible improvements
+
+Though model runs fine for track one, it does not work well for track two. Following can improve the performance on track two.
+I did not get a chance to try these out due to time limitation.
+
+1. Train with more training data from track two. The training data from track one shows the center lane driving and not so sharp turns. Track two needs the right lane driving and has a lot of sharp turns.
+2. Tune the model architecture (change the number of filters for convolution layers and play around the drop out probability rates)
+3. Try changing the input to model from single center image to panaromic image obtained by stitching the left, center and right images.
