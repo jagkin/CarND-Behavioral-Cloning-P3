@@ -52,23 +52,23 @@ The model.py file contains the code for training and saving the convolution neur
 
 #### 1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24)
+My model consists of a convolution neural network with 3x3 and 5x5 filter sizes and depths between 24 and 64 (model.py lines 142-148)
 
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18).
+The model includes RELU layers to introduce nonlinearity (code line 142-146), and the data is normalized in the model using a Keras lambda layer (code line 138).
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21).
+The model contains dropout layers in order to reduce overfitting (model.py lines 143, 145, 155, 157, 159 and 161).
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 106-114). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
+The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 164).
 
 #### 4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ...
+Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road and right lane driving on track two.
 
 For details about how I created the training data, see the next section.
 
@@ -86,7 +86,7 @@ At the end of the process, the vehicle is able to drive autonomously around the 
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes.
+The final model architecture (model.py lines 135-171) consisted of a convolution neural network with the following layers and layer sizes.
 
 Here is a visualization of the architecture generated using plot_model from keras.utils
 
@@ -119,7 +119,7 @@ I finally randomly shuffled the data set and put 20% of the data into a validati
 
 After the collection process, I had 45054 training data points and 11268 validation data points. I then preprocessed this data by normalizing the images by dividing the samples by 255 and subtracting 0.5 (so that mean is 0) and cropping the images to remove the 70 pixels from the top (to hide the distracting information like trees/shadows/sun etc) and 25 pixels from the bottom (to hide the image of the car itself).
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 5 as evidenced by validation loss. I used an adam optimizer so that manually training the learning rate wasn't necessary.
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The number of epochs was choosen to be 10 as a sort of trade off between the training time and validation loss. I used an adam optimizer so that manually training the learning rate wasn't necessary.
 
 ### Possible improvements
 
