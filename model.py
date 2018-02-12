@@ -1,15 +1,9 @@
 
 # coding: utf-8
 
-# ## Create and train a DNN to predict steering angle for car in simulator
+# Create and train a DNN to predict steering angle for car in simulator
 
-# ### Generator function to read the data from file
-
-# #### Import necessary packages
-
-# In[1]:
-
-
+# Import necessary packages
 import csv
 import numpy as np
 import matplotlib.image as mpimg
@@ -17,18 +11,12 @@ import sklearn
 from sklearn.model_selection import train_test_split
 
 
-# In[2]:
-
-
-# Directory containing the training data
+# Set directory containing the training data
 dir_path = './data_jkinni/'
+print('Using data from ', dir_path)
 
 
-# #### Helper functions to read the training data
-
-# In[9]:
-
-
+# Helper functions to read the training data
 def get_img_file_path(line, index, dir_path):
     """ Returns path to an image 
     using directory path, line from driving_log.csv and index.
@@ -53,9 +41,15 @@ def concat_dataset(base_path, set_name, lines):
 
 def generator(dir_path, lines, batch_size=32):
     """ Image and steering angle generaor.
+        The function "generates" training/validation images and angles
+        using the path to the datasets. Function also does data augmentation
+        by using left/right images and also flipping the images.
     """
+    # Get total number of lines available
     num_lines = len(lines)
+
     while 1:
+        # Fetch batch_size lines at a time
         for offset in range(0, num_lines, batch_size):
             batch_lines = lines[offset:offset+batch_size]
             
@@ -90,7 +84,7 @@ def generator(dir_path, lines, batch_size=32):
                 images.append(r_img)
                 angles.append(angle - side_angle_factor)
 
-            # Augment the data by flipping the image and negating the angle
+            # Augment the data further, by flipping the image and negating the angle
             aug_images = []
             aug_angles = []
             for image, angle in zip(images, angles):
@@ -106,11 +100,7 @@ def generator(dir_path, lines, batch_size=32):
             yield sklearn.utils.shuffle(X_train, y_train)           
 
 
-# #### Read the training data
-
-# In[10]:
-
-
+# Read the training data
 lines = []
 # Read data of a forward lap around track1
 lines = concat_dataset(dir_path, 'track1_forward_lap', lines)
@@ -122,19 +112,22 @@ lines = concat_dataset(dir_path, 'track1_recovery_right', lines)
 lines = concat_dataset(dir_path, 'track1_reverse_lap', lines)
 # Read data of a reverse lap around track2
 lines = concat_dataset(dir_path, 'track2_forward_lap', lines)
+print ('Total number of lines: ', len(lines))
 
-
+# Split out the 20% data as validation data
 train_lines, val_lines = train_test_split(lines, test_size = 0.2)
+
+# Print the total number of training/validation lines
+# Multiplying the number of lines by 6 to account for data augmentation
+print ('Total number of training images: ', 6*len(train_lines))
+print ('Total number of validation images: ', 6*len(val_lines))
 
 train_generator = generator(dir_path, train_lines, batch_size=32)
 validation_generator = generator(dir_path, val_lines, batch_size=32)
 
 
-# #### Implement the network based on Nvidia DriveAV's model
-
-# In[ ]:
-
-
+# Implement the network based on Nvidia DriveAV's model
+# Import necessary packages
 from keras.models import Sequential
 from keras.layers import Flatten, Dense, Lambda, Conv2D, Dropout, Cropping2D
 from keras.layers.pooling import MaxPooling2D
@@ -172,7 +165,11 @@ model.compile(loss='mse', optimizer='adam')
 
 model.fit_generator(train_generator, samples_per_epoch=6*len(train_lines),
                     validation_data=validation_generator, nb_val_samples=6*len(val_lines),
-                    nb_epoch=5, verbose=1)
+                    nb_epoch=10, verbose=1)
 
+print('Saving model')
 model.save('model.h5')
 
+from keras import backend as K
+K.clear_session()
+exit()
