@@ -12,3 +12,5 @@ The project submission has following files:
 * model.h5 (a trained Keras model)
 * Markdown write up
 * video.mp4 (a video recording of vehicle driving autonomously around the track at 60fps, captured for one full lap)
+
+The test data data_jkinni.zip can be found under releases https://github.com/jagkin/CarND-Behavioral-Cloning-P3/releases/download/v1.0/data_jkinni.zip
